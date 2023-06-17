@@ -8,29 +8,39 @@ import { SITE_TITLE } from "../config";
 
 const myProject = project.extend({
   description: z.optional(z.string()),
-  type: z.optional(z.string())
+  type: z.string(),
 });
 
-const projects = await readAll({
+const docs = await readAll({
   directory: "content",
   frontmatterSchema: myProject,
 });
 
-const sortedProjects = projects
+const sortedDocs = docs
   .filter((p) => p.frontmatter.draft !== true)
   .sort(
     (a, b) =>
       new Date(b.frontmatter.date).valueOf() -
       new Date(a.frontmatter.date).valueOf()
   );
+
+const talks = sortedDocs.filter(
+  (p) => ["video", "presentation"].includes(p.frontmatter.type)
+);
+const projects = sortedDocs.filter((p) => p.frontmatter.type  === "project");
+const articles = sortedDocs.filter((p) => p.frontmatter.type === "article");
+const hackathons = sortedDocs.filter(
+  (p) => p.frontmatter.type === "hackathon"
+);
 ---
 
 <PageLayout>
   <PageMeta title={`Content`} slot="meta" />
   <section slot="main">
+    <h2 class="text-2xl">Talks</h2>
     <ul>
       {
-        sortedProjects.map((project) => {
+        talks.map((project: any) => {
           const formattedDate = new Date(
             project.frontmatter.date
           ).toLocaleDateString("en-us", {
@@ -45,18 +55,158 @@ const sortedProjects = projects
                   href={project.frontmatter.url}
                   target="_blank"
                   class="unset
-                      transition-[background-size] duration-300 
-                      bg-gradient-to-r bg-left-bottom bg-no-repeat
-                      bg-[length:0%_55%] hover:bg-[length:100%_55%] dark:bg-[length:0%_2px] hover:dark:bg-[length:100%_2px]
-                      from-primary-blue to-primary-blue dark:from-primary-blue dark:to-primary-blue
-                    "
+              transition-[background-size] duration-300 
+              bg-gradient-to-r bg-left-bottom bg-no-repeat
+              bg-[length:0%_55%] hover:bg-[length:100%_55%] dark:bg-[length:0%_2px] hover:dark:bg-[length:100%_2px]
+              from-primary-blue to-primary-blue dark:from-primary-blue dark:to-primary-blue
+            "
                 >
                   <span>{project.frontmatter.title}</span>
                   <span>
                     <i class="ml-1 mr-1 text-[12px] pb-2 fa-solid fa-up-right-from-square" />
                   </span>
                 </a>
-                <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">{project.frontmatter.type}</span>
+                <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">
+                  {project.frontmatter.type}
+                </span>
+                <br />
+                <span class="text-sm">{project.frontmatter.description}</span>
+              </div>
+              <div class="text-text-muted text-sm italic pt-1">
+                <time datetime={project.frontmatter.date.toISOString()}>
+                  {formattedDate}
+                </time>
+              </div>
+            </li>
+          );
+        })
+      }
+    </ul>
+    <br/>
+    <h2 class="text-2xl">Projects</h2>
+    <ul>
+      {
+        projects.map((project: any) => {
+          const formattedDate = new Date(
+            project.frontmatter.date
+          ).toLocaleDateString("en-us", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          });
+          return (
+            <li class="grid grid-cols-[1fr] md:grid-cols-[1fr_auto] mb-3 md:gap-2 items-start">
+              <div class="title">
+                <a
+                  href={project.frontmatter.url}
+                  target="_blank"
+                  class="unset
+              transition-[background-size] duration-300 
+              bg-gradient-to-r bg-left-bottom bg-no-repeat
+              bg-[length:0%_55%] hover:bg-[length:100%_55%] dark:bg-[length:0%_2px] hover:dark:bg-[length:100%_2px]
+              from-primary-blue to-primary-blue dark:from-primary-blue dark:to-primary-blue
+            "
+                >
+                  <span>{project.frontmatter.title}</span>
+                  <span>
+                    <i class="ml-1 mr-1 text-[12px] pb-2 fa-solid fa-up-right-from-square" />
+                  </span>
+                </a>
+                <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">
+                  {project.frontmatter.type}
+                </span>
+                <br />
+                <span class="text-sm">{project.frontmatter.description}</span>
+              </div>
+              <div class="text-text-muted text-sm italic pt-1">
+                <time datetime={project.frontmatter.date.toISOString()}>
+                  {formattedDate}
+                </time>
+              </div>
+            </li>
+          );
+        })
+      }
+    </ul>
+    <br/>
+    <h2 class="text-2xl">Articles</h2>
+    <ul>
+      {
+        articles.map((project: any) => {
+          const formattedDate = new Date(
+            project.frontmatter.date
+          ).toLocaleDateString("en-us", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          });
+          return (
+            <li class="grid grid-cols-[1fr] md:grid-cols-[1fr_auto] mb-3 md:gap-2 items-start">
+              <div class="title">
+                <a
+                  href={project.frontmatter.url}
+                  target="_blank"
+                  class="unset
+              transition-[background-size] duration-300 
+              bg-gradient-to-r bg-left-bottom bg-no-repeat
+              bg-[length:0%_55%] hover:bg-[length:100%_55%] dark:bg-[length:0%_2px] hover:dark:bg-[length:100%_2px]
+              from-primary-blue to-primary-blue dark:from-primary-blue dark:to-primary-blue
+            "
+                >
+                  <span>{project.frontmatter.title}</span>
+                  <span>
+                    <i class="ml-1 mr-1 text-[12px] pb-2 fa-solid fa-up-right-from-square" />
+                  </span>
+                </a>
+                <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">
+                  {project.frontmatter.type}
+                </span>
+                <br />
+                <span class="text-sm">{project.frontmatter.description}</span>
+              </div>
+              <div class="text-text-muted text-sm italic pt-1">
+                <time datetime={project.frontmatter.date.toISOString()}>
+                  {formattedDate}
+                </time>
+              </div>
+            </li>
+          );
+        })
+      }
+    </ul>
+    <br/>
+    <h2 class="text-2xl">Hackathons</h2>
+    <ul>
+      {
+        hackathons.map((project: any) => {
+          const formattedDate = new Date(
+            project.frontmatter.date
+          ).toLocaleDateString("en-us", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          });
+          return (
+            <li class="grid grid-cols-[1fr] md:grid-cols-[1fr_auto] mb-3 md:gap-2 items-start">
+              <div class="title">
+                <a
+                  href={project.frontmatter.url}
+                  target="_blank"
+                  class="unset
+              transition-[background-size] duration-300 
+              bg-gradient-to-r bg-left-bottom bg-no-repeat
+              bg-[length:0%_55%] hover:bg-[length:100%_55%] dark:bg-[length:0%_2px] hover:dark:bg-[length:100%_2px]
+              from-primary-blue to-primary-blue dark:from-primary-blue dark:to-primary-blue
+            "
+                >
+                  <span>{project.frontmatter.title}</span>
+                  <span>
+                    <i class="ml-1 mr-1 text-[12px] pb-2 fa-solid fa-up-right-from-square" />
+                  </span>
+                </a>
+                <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">
+                  {project.frontmatter.type}
+                </span>
                 <br />
                 <span class="text-sm">{project.frontmatter.description}</span>
               </div>
